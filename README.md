@@ -13,17 +13,33 @@
 ## 安装
 
 ```bash
-pnpm dsh plugin --profile web add "https://github.com/Hugo16/dhs-mnemon-git-sync.git"
+pnpm dsh plugin --profile web add "https://github.com/Hugo16/dsh-mnemon-git-sync.git"
 ```
 
 安装后重启 DSH。
 
+### 版本兼容
+
+| DSH | 支持情况 |
+| --- | --- |
+| 0.2.x（含 `0.2.0-rc.2`） | ✅ 已适配：设置表单走宿主自动生成，可编辑字段声明 `.volatile()`；插件配置入口为 **插件 → 已安装 → 行配置** |
+| 0.1.7-rc.1 及以后 | ✅ |
+| 0.1.6 及更早 | 未适配（旧 `installSection` / `settings.plugin.item` 注册方式已从 DSH 移除） |
+
+`0.2.0-rc.2` 下插件不再自行注册设置分区：宿主 `dsh-settings` 直接读取本插件导出的 `Config`，
+挑出其中声明了 `.volatile()` 的字段生成可写表单，配置改动由 Loader 就地生效，无需重挂插件。
+本插件自带更完整的卡片界面（状态、手动同步、冲突改判），因此用 `configure({ auto: false })`
+关掉宿主的自动表单，避免同一个插件行出现两套 UI。
+
 ## 使用
 
-设置入口（保存后写入 `settings.yaml` 的 `mnemon-git-sync` 段）：
+设置入口：
 
-* DSH 0.1.6-alpha.2+：侧栏 **插件 → 已安装 → mnemon-git-sync → 行配置**
-* DSH 0.1.5 及更早：**设置 → 插件 → 可配置 → Mnemon Git Sync**
+* DSH 0.1.7-rc.1+（含 0.2.x）：侧栏 **插件 → 已安装 → dsh-mnemon-git-sync → 行配置**
+* DSH 0.1.6-alpha.2 ~ 0.1.6：侧栏 **插件 → 已安装 → mnemon-git-sync → 行配置**
+* DSH 0.1.5 及更早：**设置 → 插件 → 可配置 → Mnemon Git Sync**（旧版本已不再支持，见上表）
+
+配置由插件自带的行配置页保存，0.2.x 下写入 profile 的补丁层。
 
 填好 **仓库地址**，点「保存」，再点「立即同步」。开启「自动同步」后按间隔后台运行。
 
